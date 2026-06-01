@@ -1,4 +1,4 @@
-# Feed Declutter for LinkedIn
+# LinkedIn Feed Filter
 
 An "agent that acts" on your LinkedIn feed: it reads each post as you scroll,
 decides whether it's a humblebrag / "I'm thrilled to announce my new role" /

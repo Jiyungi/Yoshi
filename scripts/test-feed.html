@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Feed Declutter — Visual Test Harness</title>
+    <link rel="stylesheet" href="../src/styles.css" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        max-width: 620px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f3f2ef;
+        color: #1d1d1d;
+      }
+      h1 { font-size: 18px; }
+      .controls {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 50;
+      }
+      .controls output { font-variant-numeric: tabular-nums; font-weight: 700; }
+      .feed-shared-update-v2 {
+        position: relative;
+        background: #fff;
+        border: 1px solid #e0dfdc;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+      }
+      .update-components-actor__title { font-weight: 600; font-size: 14px; }
+      .update-components-text {
+        margin-top: 8px;
+        white-space: pre-wrap;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .note { font-size: 12px; color: #666; }
+      .score-tag {
+        position: absolute; top: 8px; right: 10px;
+        font-size: 11px; font-weight: 700; color: #b24020;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Feed Declutter — Visual Test Harness</h1>
+    <p class="note">
+      Uses the real <code>src/heuristics.js</code> + <code>src/styles.css</code> and the
+      same blur logic as the extension. No LinkedIn, no extension load needed.
+      Open this file in a browser. (LLM escalation is not exercised here — heuristics only.)
+    </p>
+
+    <div class="controls">
+      <label>Aggressiveness (threshold)</label>
+      <input type="range" id="threshold" min="0.3" max="0.9" step="0.05" value="0.6" />
+      <output id="out">0.60</output>
+    </div>
+
+    <div id="feed"></div>
+
+    <script src="../src/heuristics.js"></script>
+    <script>
+      // Sample posts mimicking LinkedIn's DOM (same classes the content script targets).
+      const SAMPLES = [
+        {
+          author: "Alex Humblebrag",
+          text:
+            "I'm beyond humbled and thrilled to announce that I got into my dream program! 🎉🚀\n" +
+            "🚀 Hard work pays off\n✅ Never give up\n🔥 Dreams really do come true\n" +
+            "Thoughts?\n#blessed #grateful #journey #success #motivation #career"
+        },
+        {
+          author: "Jamie Bait",
+          text:
+            "Unpopular opinion: most meetings are useless.\n\nAgree?\n\n" +
+            "Comment 'YES' below and repost this if it resonates. 👇"
+        },
+        {
+          author: "Pat Filler",
+          text:
+            "In today's fast-paced digital world, it is important to understand the value " +
+            "of networking. In conclusion, building relationships is essential for success."
+        },
+        {
+          author: "Sam Engineer",
+          text:
+            "We shipped a change to our caching layer that cut p99 latency from 340ms to 90ms. " +
+            "The key was moving from per-request DB lookups to a read-through cache with a 30s TTL. " +
+            "Happy to share the config if useful."
+        },
+        {
+          author: "Robin Normal",
+          text: "Great talk by the team today on observability. Learned a lot about tracing."
+        }
+      ];
+
+      const feed = document.getElementById("feed");
+      const thresholdEl = document.getElementById("threshold");
+      const out = document.getElementById("out");
+
+      function buildPost(sample) {
+        const card = document.createElement("div");
+        card.className = "feed-shared-update-v2";
+        card.innerHTML =
+          `<div class="update-components-actor__title">${sample.author}</div>` +
+          `<div class="update-components-text">${sample.text.replace(/</g, "&lt;")}</div>`;
+        return card;
+      }
+
+      function render() {
+        const threshold = parseFloat(thresholdEl.value);
+        out.textContent = threshold.toFixed(2);
+        feed.innerHTML = "";
+
+        for (const sample of SAMPLES) {
+          const card = buildPost(sample);
+          const result = window.FeedDeclutterHeuristics.score(sample.text);
+
+          const tag = document.createElement("div");
+          tag.className = "score-tag";
+          tag.textContent = result.score.toFixed(2);
+          card.appendChild(tag);
+
+          if (result.score >= threshold) {
+            card.classList.add("fd-blurred");
+            const badge = document.createElement("div");
+            badge.className = "fd-badge";
+            const reason = result.tags.length ? result.tags.slice(0, 3).join(", ") : "low-signal";
+            badge.innerHTML =
+              `<span class="fd-badge__title">Filtered &middot; ${(result.score * 100) | 0}%</span>` +
+              `<span class="fd-badge__reason">${reason}</span>` +
+              `<div class="fd-badge__actions">` +
+              `<button class="fd-badge__show" type="button">Show anyway</button></div>`;
+            badge.querySelector(".fd-badge__show").addEventListener("click", () => {
+              card.classList.remove("fd-blurred");
+              badge.remove();
+            });
+            card.appendChild(badge);
+          }
+          feed.appendChild(card);
+        }
+      }
+
+      thresholdEl.addEventListener("input", render);
+      render();
+    </script>
+  </body>
+</html>

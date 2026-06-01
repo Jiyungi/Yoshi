@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Feed Declutter for LinkedIn",
+  "version": "0.2.0",
+  "description": "An agent that triages your LinkedIn feed: scores AI/humblebrag/bait posts locally, classifies hard cases with Nebius or NEAR AI, remembers muted authors via Insforge, and can act via Rover.",
+  "permissions": ["storage", "scripting", "activeTab", "tabs"],
+  "host_permissions": ["https://www.linkedin.com/*"],
+  "optional_host_permissions": [
+    "https://*.insforge.app/*",
+    "https://api.studio.nebius.ai/*",
+    "https://api.tokenfactory.nebius.com/*",
+    "https://api.near.ai/*",
+    "https://api.openai.com/*",
+    "https://agent.rtrvr.ai/*",
+    "https://rover.rtrvr.ai/*",
+    "https://roverbook.rtrvr.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Feed Declutter",
+    "default_popup": "src/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["src/heuristics.js", "src/content.js"],
+      "css": ["src/styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["vendor/worker.js", "vendor/rover-embed.js", "vendor/page-bridge.js"],
+      "matches": ["https://www.linkedin.com/*"]
+    }
+  ]
+}

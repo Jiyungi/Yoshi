@@ -1,0 +1,17 @@
+{
+  "_comment": "Copy this to config.json and fill in your values. config.json is gitignored (holds secrets). The background worker seeds these into chrome.storage on install/startup so you never touch the popup. Omitted fields fall back to defaults; the popup can still override live.",
+  "useLlm": true,
+  "provider": "nebius",
+  "apiKey": "PASTE_YOUR_NEBIUS_KEY_HERE",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+  "apiBaseOverride": "",
+  "dailyCallCap": 500,
+  "insforgeUrl": "https://<appkey>.<region>.insforge.app",
+  "insforgeKey": "ik_...",
+  "roverEnabled": false,
+  "roverApiToken": "rtrvr_...",
+  "roverApiBase": "https://agent.rtrvr.ai",
+  "enabled": true,
+  "threshold": 0.6,
+  "action": "blur"
+}

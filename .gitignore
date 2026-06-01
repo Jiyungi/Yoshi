@@ -1,0 +1,16 @@
+# Secrets — never commit
+.env
+.env.*
+*.local
+src/config.json
+
+# Rover runtime (downloaded at build time, optional)
+vendor/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+.vscode/

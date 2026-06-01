@@ -1,0 +1,152 @@
+/* Feed Declutter — injected styles */
+
+.fd-hidden {
+  display: none !important;
+}
+
+.fd-blurred {
+  position: relative !important;
+}
+
+.fd-blurred > *:not(.fd-badge) {
+  filter: blur(14px) !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+.fd-badge {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 24px 12px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(3px) saturate(120%);
+  border-radius: 8px;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .fd-badge {
+    background: rgba(20, 20, 20, 0.82);
+    color: #e8e8e8;
+  }
+}
+
+.fd-badge__title {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.fd-badge__reason {
+  font-size: 12px;
+  opacity: 0.8;
+  max-width: 80%;
+}
+
+.fd-badge__actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.fd-badge__show,
+.fd-badge__mute,
+.fd-badge__notinterested,
+.fd-badge__explain {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid currentColor;
+  border-radius: 16px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.fd-badge__show:hover,
+.fd-badge__mute:hover,
+.fd-badge__notinterested:hover,
+.fd-badge__explain:hover {
+  background: rgba(127, 127, 127, 0.15);
+}
+
+.fd-badge__explain {
+  border-color: #FF4C00;
+  color: #FF4C00;
+}
+
+.fd-badge__context {
+  max-width: 90%;
+  margin: 4px 0 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fd-ctxline {
+  background: rgba(127, 127, 127, 0.12);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+.fd-badge__ctxnote {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.fd-badge__automute {
+  margin-left: 6px;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid currentColor;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.fd-spin {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.fd-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 99999;
+  background: #FF4C00;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 22px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fd-toast--show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.fd-src-line {
+  text-align: center;
+}
+
+.fd-src {
+  font-size: 10px;
+  opacity: 0.55;
+}

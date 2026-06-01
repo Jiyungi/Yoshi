@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Feed Declutter</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Feed Declutter</h1>
+    <p class="sub">Triages your LinkedIn feed. Local-first, with optional AI + memory.</p>
+
+    <label class="row toggle">
+      <span>Enabled</span>
+      <input type="checkbox" id="enabled" />
+    </label>
+
+    <label class="row">
+      <span>Aggressiveness</span>
+      <input type="range" id="threshold" min="0.3" max="0.9" step="0.05" />
+      <output id="thresholdOut"></output>
+    </label>
+    <p class="hint">Lower = filters more posts. Higher = only the obvious ones.</p>
+
+    <label class="row">
+      <span>When filtered</span>
+      <select id="action">
+        <option value="blur">Blur (with reason)</option>
+        <option value="hide">Hide completely</option>
+      </select>
+    </label>
+
+    <hr />
+
+    <label class="row toggle">
+      <span>AI classifier (hard cases)</span>
+      <input type="checkbox" id="useLlm" />
+    </label>
+    <p class="hint warn">
+      Off by default. When on, borderline post text is sent to the provider below.
+    </p>
+
+    <div id="llmFields" hidden>
+      <label class="row col">
+        <span>Provider</span>
+        <select id="provider">
+          <option value="nebius">Nebius AI Cloud</option>
+          <option value="near">NEAR AI</option>
+          <option value="openai">OpenAI</option>
+        </select>
+      </label>
+      <label class="row col">
+        <span>API key</span>
+        <input type="password" id="apiKey" placeholder="sk-... / nb-..." autocomplete="off" />
+      </label>
+      <label class="row col">
+        <span>Model</span>
+        <input type="text" id="model" placeholder="Qwen/Qwen3-30B-A3B-Instruct-2507" />
+      </label>
+      <label class="row col">
+        <span>API base override (optional)</span>
+        <input type="text" id="apiBaseOverride" placeholder="leave blank for provider default" />
+      </label>
+      <label class="row col">
+        <span>Daily call cap (cost safety)</span>
+        <input type="number" id="dailyCallCap" min="0" step="50" />
+      </label>
+      <p class="hint" id="budgetReadout"></p>
+    </div>
+
+    <hr />
+
+    <h2>Memory (InsForge)</h2>
+    <p class="hint">
+      Stores muted authors + decision log so the agent learns. Blank = local only.
+    </p>
+    <label class="row col">
+      <span>Project URL</span>
+      <input type="text" id="insforgeUrl" placeholder="https://<appkey>.<region>.insforge.app" />
+    </label>
+    <label class="row col">
+      <span>Access key</span>
+      <input type="password" id="insforgeKey" placeholder="ik_..." autocomplete="off" />
+    </label>
+
+    <hr />
+
+    <h2>Actions (Rover)</h2>
+    <p class="hint">
+      When on, muting an author also asks Rover to unfollow them on LinkedIn.
+      Get config from rtrvr.ai/rover workspace (publicKey only).
+    </p>
+    <label class="row toggle">
+      <span>Enable Rover actions</span>
+      <input type="checkbox" id="roverEnabled" />
+    </label>
+    <div id="roverFields" hidden>
+      <label class="row col">
+        <span>Site ID</span>
+        <input type="text" id="roverSiteId" placeholder="your_site_id" />
+      </label>
+      <label class="row col">
+        <span>Public key</span>
+        <input type="text" id="roverPublicKey" placeholder="pk_site_..." />
+      </label>
+      <label class="row col">
+        <span>Site key ID</span>
+        <input type="text" id="roverSiteKeyId" placeholder="key_..." />
+      </label>
+    </div>
+
+    <hr />
+
+    <button id="digestBtn" class="wide" type="button">Show today's digest</button>
+    <div id="digest" class="digest"></div>
+
+    <p id="status" class="status"></p>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
